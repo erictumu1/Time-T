@@ -23,7 +23,7 @@ function StartPage() {
         </Button>
       </Link>
 
-      <div className="flex justify-evenly items-end w-full px-4 -ml-25 -mt-8">
+      <div className="flex justify-evenly items-end w-full px-4 -ml-25 -mt-12">
         {/* Laptop Motion */}
         <motion.div
           className="relative w-[960px] aspect-[16/9] overflow-hidden -ml-20"
@@ -49,19 +49,19 @@ function StartPage() {
 
         {/* iPhone Motion */}
           <motion.div
-            className="hidden md:block relative w-[250px] aspect-[9/18] overflow-hidden mb-10"
+            className="hidden md:block relative w-[250px] aspect-[9/18] overflow-hidden mb-10 sm: -ml-95"
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           >
             <img
               src={iphone}
               alt="iPhone Screenshot"
-              className="absolute top-[8%] left-[11.5%] w-[75%] h-[90%] object-cover rounded-md"
+              className="absolute top-[9%] left-[10%] w-[80%] h-[86%] object-cover rounded-md"
             />
             <img
               src={iphoneimage}
               alt="iPhone Frame"
-              className="top-[28%] w-[200%] h-[50%] relative scale-225"
+              className="top-[27%] w-[200%] h-[50%] relative scale-215"
             />
           </motion.div>
       </div>
