@@ -15,13 +15,13 @@ function StartPage() {
       </p>
 
       <Link to={'/create-trip'}>
-        <Button className="bg-[#004aad] text-white px-6 py-3 rounded-md hover:bg-blue-700 transition cursor-pointer">
+        <Button className="bg-red-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-black hover:border-2 hover:border-red-700 transition cursor-pointer">
           Get Started
         </Button>
       </Link>
 
     {/* Laptop with Screenshot container */}
-    <div className="relative w-[960px] max-w-full -mt-20 aspect-[16/9] overflow-hidden">
+    <div className="relative w-[960px] max-w-full -mt-11 aspect-[16/9] overflow-hidden">
       {/* Screenshot*/}
       <img
         src={landing}
