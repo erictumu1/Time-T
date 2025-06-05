@@ -82,20 +82,25 @@ const GetUserProfile = (tokenInfo) => {
                 MyTrips
               </Button>
             </a>
-            <Popover>
-              <PopoverTrigger>
+              <Popover>
+                <PopoverTrigger>
                   <div className="h-[40px] w-[40px] rounded-full bg-red-700 flex items-center justify-center text-sm font-bold text-white cursor-pointer">
                     {initials}
                   </div>
-              </PopoverTrigger>
-              <PopoverContent className="bg-white border-2 border-red-700">
-                <h2 className="cursor-pointer" onClick={()=>{
-                  googleLogout();
-                  localStorage.clear();
-                  window.location.reload();
-                }}>Logout</h2>
-              </PopoverContent>
-            </Popover>
+                </PopoverTrigger>
+                <PopoverContent className="bg-white border-2 border-red-700">
+                  <h2
+                    className="cursor-pointer"
+                    onClick={() => {
+                      googleLogout();
+                      localStorage.clear();
+                      window.location.href = '/';
+                    }}
+                  >
+                    Logout
+                  </h2>
+                </PopoverContent>
+              </Popover>
           </div>
         ) : (
           <Button onClick={()=>{setOpenDialog(true)}} className="bg-[#004aad] text-white px-6 py-3 rounded-md hover:bg-black transition cursor-pointer">

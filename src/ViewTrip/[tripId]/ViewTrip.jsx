@@ -8,30 +8,34 @@ import Hotels from '../components/Hotels';
 import InfoSection from '../components/InfoSection';
 import PlacesToVisit from '../components/PlacesToVisit';
 
-function  ViewTrip(){
+function ViewTrip() {
+  const { tripId } = useParams();
+  const [trip, setTrip] = useState([]);
 
-  const {tripId} = useParams();
-  const [trip,setTrip] = useState([]);
+  //To refresh the NavBar on login
+  useEffect(() => {
+    if (!sessionStorage.getItem('hasReloaded')) {
+      sessionStorage.setItem('hasReloaded', 'true');
+      window.location.reload();
+    }
+  }, []);
 
-  useEffect(()=>{
-    tripId&&getTripData();
-  },[tripId])
+  useEffect(() => {
+    tripId && getTripData();
+  }, [tripId]);
 
-  // Used to get trip information from firebase
-
-  const getTripData=async()=>{
-    const docRef = doc(db,'AITrips',tripId);
+  const getTripData = async () => {
+    const docRef = doc(db, 'AITrips', tripId);
     const docSnap = await getDoc(docRef);
 
-    if(docSnap.exists()){
-      console.log("Document:",docSnap.data());
+    if (docSnap.exists()) {
+      console.log("Document:", docSnap.data());
       setTrip(docSnap.data());
-    }
-    else{
+    } else {
       console.log("No such Document");
       toast('No trip found');
     }
-  }
+  };
 
   return (
     <div className='p-10 md:px-20 lg:px-44 xl:px-56'>
@@ -45,9 +49,9 @@ function  ViewTrip(){
       <PlacesToVisit trip={trip} />
 
       {/* Footer */}
-      <Footer trip={trip}/>
+      <Footer trip={trip} />
     </div>
-  )
+  );
 }
 
-export default ViewTrip
+export default ViewTrip;

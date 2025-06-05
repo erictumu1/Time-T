@@ -29,19 +29,28 @@ function CreateTrip() {
 
   const [loading, setLoading] = useState(false); 
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const navigate = useNavigate();
 
-  const handleInputChange = (name,value)=>{
-
-    if(name=='noOfDays'&&value>5){
-      return;
+  const handleInputChange = (name, value) => {
+    if (name === 'noOfDays') {
+      if (value < 1) {
+        setErrorMessage('Please enter at least 1 day.');
+        return;
+      } else if (value > 5) {
+        setErrorMessage('We are sorry, but we currently support trips up to 5 days.');
+        return;
+      } else {
+        setErrorMessage('');
+      }
     }
-    
+  
     setFormData({
       ...formData,
-      [name]:value
-    })
-  }
+      [name]: value
+    });
+  };
 
   useEffect(()=>{
     console.log(formData);
@@ -100,7 +109,7 @@ const onGenerateTrip = async () => {
       // Found existing trip, navigate to it
       const existingTrip = querySnapshot.docs[0].data();
       setLoading(false);
-      navigate("/view-trip/" + existingTrip.id);
+      window.location.href = "/view-trip/" + existingTrip.id;
       return;
     }
 
@@ -138,7 +147,7 @@ const saveAITrip = async (TripData) => {
       createdAt: serverTimestamp(),
     });
     setLoading(false);
-    navigate('/view-trip/'+docId);
+    window.location.href = '/view-trip/' + docId;
 
   } catch (error) {
     console.error("Invalid JSON in TripData:", error);
@@ -157,13 +166,29 @@ const GetUserProfile = (tokenInfo) => {
     }
   }).then((resp) => {
     console.log(resp);
-    localStorage.setItem('user',JSON.stringify(resp.data));
+    localStorage.setItem('user', JSON.stringify(resp.data));
     setOpenDialog(false);
+
+    toast("Login successful!", {
+      style: {
+        background: "white",
+        color: "green",
+      },
+    });
+
+    toast("Generating your trip. Please be patient...", {
+      style: {
+        background: "white",
+        color: "green",
+      },
+    });
+
     onGenerateTrip();
   }).catch((error) => {
     console.error("Error fetching user profile:", error);
   });
 };
+
 
 
   return (
@@ -186,9 +211,14 @@ const GetUserProfile = (tokenInfo) => {
       
       <div className="mt-10" >
         <h2 className="text-xl my-3 font-medium" >How many days are you planning to stay?</h2>
-        <Input placeholder={"Ex.3"} type="number"
-          onChange={(e)=>handleInputChange('noOfDays',e.target.value)}
-        />
+          <Input
+            placeholder="Ex. 3"
+            type="number"
+            onChange={(e) => handleInputChange('noOfDays', Number(e.target.value))}
+          />
+          {errorMessage && (
+            <p className="text-red-500 mt-2 text-sm font-medium">{errorMessage}</p>
+          )}
       </div>
 
       <div className="mt-10">
