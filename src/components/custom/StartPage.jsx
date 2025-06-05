@@ -1,5 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import iphone from '../../assets/iphone.jpeg';
+import iphoneimage from '../../assets/iphoneimage.png';
 import landing from "../../assets/landing.png";
 import landing1 from "../../assets/landing1.png";
 import laptop from '../../assets/laptop.png';
@@ -7,41 +10,61 @@ import laptop from '../../assets/laptop.png';
 function StartPage() {
   return (
     <div className="flex flex-col items-center max-w-5xl mx-auto px-6 gap-9">
-      <h1 className="font-extrabold text-[50px] text-center mt-16">
-        <span className="text-[#004aad]">Discover Your Next Adventure with AI:</span> Personalized Itineraries at Your FingerTips
+      <h1 className="font-extrabold text-[312%] text-center mt-9">
+        <span className="text-[#004aad]">Discover Your Next Adventure with AI:</span > Personalized Itineraries at Your FingerTips
       </h1>
       <p className="text-xl text-gray-500 text-center -mt-5">
         Your personal trip planner and travel curator, creating custom itineraries tailored to your interests and budget.
       </p>
 
       <Link to={'/create-trip'}>
-        <Button className="bg-red-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-black hover:border-2 hover:border-red-700 transition cursor-pointer">
+        <Button className="-mt-20 bg-red-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-black hover:border-2 hover:border-red-700 transition cursor-pointer">
           Get Started
         </Button>
       </Link>
 
-    {/* Laptop with Screenshot container */}
-    <div className="relative w-[960px] max-w-full -mt-11 aspect-[16/9] overflow-hidden">
-      {/* Screenshot*/}
-      <img
-        src={landing}
-        alt="Landing Screenshot"
-        className="absolute top-[18.5%] left-[24%] w-[52%] h-[52%] object-cover rounded-sm"
-      />
-      {/* Bottom Extension */}
-      <img
-        src={landing1}
-        alt="Bottom Screenshot Extension"
-        className="absolute top-[63.5%] left-[24%] w-[52%] h-[16%] object-cover"
-      />
+      <div className="flex justify-evenly items-end w-full px-4 -ml-25 -mt-8">
+        {/* Laptop Motion */}
+        <motion.div
+          className="relative w-[960px] aspect-[16/9] overflow-hidden -ml-20"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <img
+            src={landing}
+            alt="Landing Screenshot"
+            className="absolute top-[18.5%] left-[24%] w-[52%] h-[52%] object-cover rounded-sm"
+          />
+          <img
+            src={landing1}
+            alt="Bottom Screenshot Extension"
+            className="absolute top-[63.5%] left-[24%] w-[52%] h-[16%] object-cover"
+          />
+          <img
+            src={laptop}
+            alt="Laptop Frame"
+            className="w-full h-auto relative"
+          />
+        </motion.div>
 
-      {/* Laptop frame */}
-      <img
-        src={laptop}
-        alt="Laptop Frame"
-        className="w-full h-auto relative"
-      />
-    </div>
+        {/* iPhone Motion */}
+          <motion.div
+            className="hidden md:block relative w-[250px] aspect-[9/18] overflow-hidden mb-10"
+            animate={{ y: [0, -10, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          >
+            <img
+              src={iphone}
+              alt="iPhone Screenshot"
+              className="absolute top-[8%] left-[11.5%] w-[75%] h-[90%] object-cover rounded-md"
+            />
+            <img
+              src={iphoneimage}
+              alt="iPhone Frame"
+              className="top-[28%] w-[200%] h-[50%] relative scale-225"
+            />
+          </motion.div>
+      </div>
  </div>
   );
 }

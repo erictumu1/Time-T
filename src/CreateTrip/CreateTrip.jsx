@@ -56,6 +56,18 @@ function CreateTrip() {
     console.log(formData);
   },[formData])
 
+  useEffect(() => {
+  if (loading) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [loading]);
+
 const login = useGoogleLogin({
   onSuccess: (tokenResponse) => {
     console.log("Token Info:", tokenResponse);
@@ -176,13 +188,6 @@ const GetUserProfile = (tokenInfo) => {
       },
     });
 
-    toast("Generating your trip. Please be patient...", {
-      style: {
-        background: "white",
-        color: "green",
-      },
-    });
-
     onGenerateTrip();
   }).catch((error) => {
     console.error("Error fetching user profile:", error);
@@ -191,34 +196,46 @@ const GetUserProfile = (tokenInfo) => {
 
 
 
-  return (
-    <div className="mx-auto mt-10 max-w-6xl px-5 sm:px-10 md:px-32 lg:px-56 xl:px-10">
-      <h2 className="font-bold text-3xl" >Tell us your Travel preferences 🌴</h2>
-      <p className="mt-3 text-gray-500" >Just provide some basic information, and our trip planner will generate a customized itinerary based on your preferences.</p>
-
-      <div className="mt-20 flex flex-col" >
-          <div>
-            <h2 className="text-xl my-3 font-medium" >What is your destination choice?</h2>
-              <GooglePlacesAutocompleteNew
-                apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
-                onSelect={(selected) => {
-                  setPlace(selected);
-                  handleInputChange("location", selected);
-                }}
-              />
-          </div>    
+return (
+  <>
+    {/* Loading Overlay */}
+    {loading && (
+      <div className="fixed inset-0 z-50 bg-black/70 flex flex-col items-center justify-center overflow-hidden">
+        <AiOutlineLoading3Quarters className="animate-spin text-red-500 text-6xl mb-4" />
+        <p className="text-white text-lg font-bold">Generating your trip......</p>
       </div>
-      
-      <div className="mt-10" >
-        <h2 className="text-xl my-3 font-medium" >How many days are you planning to stay?</h2>
-          <Input
-            placeholder="Ex. 3"
-            type="number"
-            onChange={(e) => handleInputChange('noOfDays', Number(e.target.value))}
+    )}
+
+    {/* Main Content */}
+    <div className="mx-auto mt-10 max-w-6xl px-5 sm:px-10 md:px-32 lg:px-56 xl:px-10">
+      <h2 className="font-bold text-3xl">Tell us your Travel preferences 🌴</h2>
+      <p className="mt-3 text-gray-500">
+        Just provide some basic information, and our trip planner will generate a customized itinerary based on your preferences.
+      </p>
+
+      <div className="mt-20 flex flex-col">
+        <div>
+          <h2 className="text-xl my-3 font-medium">What is your destination choice?</h2>
+          <GooglePlacesAutocompleteNew
+            apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+            onSelect={(selected) => {
+              setPlace(selected);
+              handleInputChange("location", selected);
+            }}
           />
-          {errorMessage && (
-            <p className="text-red-500 mt-2 text-sm font-medium">{errorMessage}</p>
-          )}
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <h2 className="text-xl my-3 font-medium">How many days are you planning to stay?</h2>
+        <Input
+          placeholder="Ex. 3"
+          type="number"
+          onChange={(e) => handleInputChange("noOfDays", Number(e.target.value))}
+        />
+        {errorMessage && (
+          <p className="text-red-500 mt-2 text-sm font-medium">{errorMessage}</p>
+        )}
       </div>
 
       <div className="mt-10">
@@ -229,9 +246,11 @@ const GetUserProfile = (tokenInfo) => {
             return (
               <div
                 key={index}
-                onClick={() => handleInputChange('budget', item.title)}
+                onClick={() => handleInputChange("budget", item.title)}
                 className={`p-4 rounded-lg bg-white cursor-pointer transition-shadow duration-300 ${
-                  isSelected ? 'shadow-2xl border-2 border-[#004aad]' : 'shadow-lg border border-gray-300'
+                  isSelected
+                    ? "shadow-2xl border-2 border-[#004aad]"
+                    : "shadow-lg border border-gray-300"
                 } hover:shadow-[0_4px_20px_rgba(0,74,173,0.7)]`}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
@@ -243,22 +262,20 @@ const GetUserProfile = (tokenInfo) => {
         </div>
       </div>
 
-<div className="mt-10">
-        <h2 className="text-xl my-3 font-medium">
-          Who do you plan to travel with on your next adventure?
-        </h2>
+      <div className="mt-10">
+        <h2 className="text-xl my-3 font-medium">Who do you plan to travel with on your next adventure?</h2>
         <div className="grid grid-cols-3 gap-5 mt-5">
           {SelectTravelesList.map((item, index) => {
             const isSelected = formData?.traveler === item.people;
             return (
               <div
                 key={index}
-                onClick={() => handleInputChange('traveler', item.people)}
-                className={`p-4 rounded-lg bg-white cursor-pointer transition-shadow duration-300
-                  ${isSelected
-                    ? 'shadow-2xl border-2 border-[#004aad]'
-                    : 'shadow-lg border border-gray-300'}
-                  hover:shadow-[0_4px_20px_rgba(0,74,173,0.7)]`}
+                onClick={() => handleInputChange("traveler", item.people)}
+                className={`p-4 rounded-lg bg-white cursor-pointer transition-shadow duration-300 ${
+                  isSelected
+                    ? "shadow-2xl border-2 border-[#004aad]"
+                    : "shadow-lg border border-gray-300"
+                } hover:shadow-[0_4px_20px_rgba(0,74,173,0.7)]`}
               >
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h2 className="font-bold text-lg">{item.title}</h2>
@@ -270,39 +287,40 @@ const GetUserProfile = (tokenInfo) => {
       </div>
 
       <div className="mt-20 justify-end flex">
-      <Button onClick={onGenerateTrip} className="bg-black text-white px-6 py-3 rounded-md hover:bg-blue-700 transition cursor-pointer">
-        {loading?
-         <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />:'Generate Trip'
-        }
-      </Button>
+        <Button
+          onClick={onGenerateTrip}
+          className="bg-black text-white px-6 py-3 rounded-md hover:bg-blue-700 transition cursor-pointer"
+          disabled={loading}
+        >
+          {loading ? (
+            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
+          ) : (
+            "Generate Trip"
+          )}
+        </Button>
       </div>
-      
+
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent>
           <DialogHeader>
-
             <DialogDescription>
-                <img className="w-39 h-17" src={logo}/>
-                <h2 className="font-bold text-lg mt-7" >Sign in with Google</h2>
-                <p>Sign in to the App with Google Authentication securely.</p>
-
-                <Button
+              <img className="w-39 h-17" src={logo} />
+              <h2 className="font-bold text-lg mt-7">Sign in with Google</h2>
+              <p>Sign in to the App with Google Authentication securely.</p>
+              <Button
                 disabled={loading}
-                  onClick={login}
-                  className=" bg-black w-full mt-5 rounded-md hover:bg-blue-700 transition cursor-pointer text-white flex gap-4 items-center">
-
-                  <FcGoogle className="h-7 w-7" />Sign In with Google.
-                </Button>
+                onClick={login}
+                className="bg-black w-full mt-5 rounded-md hover:bg-blue-700 transition cursor-pointer text-white flex gap-4 items-center"
+              >
+                <FcGoogle className="h-7 w-7" />Sign In with Google.
+              </Button>
             </DialogDescription>
-
           </DialogHeader>
         </DialogContent>
       </Dialog>
-
-      <div className="mt-10">
-      </div>
     </div>
-  )
+  </>
+);
 }
 
 export default CreateTrip

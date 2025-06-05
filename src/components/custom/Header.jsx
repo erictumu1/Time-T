@@ -15,6 +15,7 @@ import axios from "axios";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import logo from "../../assets/logo.png";
+import logout from "../../assets/logout_icon.png";
 
 function Header() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -60,7 +61,7 @@ const GetUserProfile = (tokenInfo) => {
   return (
     <div className="p-0 shadow-sm flex justify-between items-center px-5 sticky bg-white z-10">
       <a href="/">
-         <img className="w-39 h-18" src={logo} alt="Logo" />
+         <img className="w-[39%] h-[18%]" src={logo} alt="Logo" />
       </a>
       <div>
         {user ? (
@@ -89,16 +90,17 @@ const GetUserProfile = (tokenInfo) => {
                   </div>
                 </PopoverTrigger>
                 <PopoverContent className="bg-white border-2 border-red-700">
-                  <h2
-                    className="cursor-pointer"
+                  <div
                     onClick={() => {
                       googleLogout();
                       localStorage.clear();
                       window.location.href = '/';
                     }}
+                    className="cursor-pointer flex items-center gap-2 text-red-700 hover:underline"
                   >
-                    Logout
-                  </h2>
+                    <img src={logout} alt="Logout Icon" className="w-4 h-4" />
+                    <span>Logout</span>
+                  </div>
                 </PopoverContent>
               </Popover>
           </div>
