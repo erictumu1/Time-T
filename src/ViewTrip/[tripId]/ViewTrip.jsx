@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { db } from '../../service/firebaseconfig';
 import Footer from '../components/Footer';
 import Hotels from '../components/Hotels';
-import InfoSection from '../components/infoSection';
+import InfoSection from '../components/InfoSection';
 import PlacesToVisit from '../components/PlacesToVisit';
 
 function  ViewTrip(){
