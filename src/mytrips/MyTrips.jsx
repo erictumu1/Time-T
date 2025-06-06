@@ -7,7 +7,7 @@ import UserTripCardItem from "../components/UserTripCardItem";
 import { db } from "../service/firebaseconfig";
 
 function MyTrips() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [groupedTrips, setGroupedTrips] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -16,9 +16,9 @@ function MyTrips() {
   }, []);
 
   const getUserTrips = async () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem("user"));
     if (!user) {
-      navigate('/');
+      navigate("/");
       return;
     }
 
@@ -46,12 +46,12 @@ function MyTrips() {
         acc[year][date].push(trip);
         return acc;
       }, {});
-      
+
       setGroupedTrips(grouped);
     } catch (err) {
       console.error("Error fetching trips:", err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -62,27 +62,46 @@ function MyTrips() {
       {loading ? (
         <div className="grid grid-cols-2 mt-10 md:grid-cols-3 gap-5">
           {[1, 2, 3, 4, 5, 6].map((_, index) => (
-            <div key={index} className="h-[250px] w-full bg-slate-200 animate-pulse rounded-xl"></div>
+            <div
+              key={index}
+              className="h-[250px] w-full bg-slate-200 animate-pulse rounded-xl"
+            ></div>
           ))}
         </div>
       ) : Object.keys(groupedTrips).length > 0 ? (
-        Object.keys(groupedTrips).sort((a, b) => b - a).map((year) => (
-          <div key={year} className="mt-12">
-            <h2 className="text-3xl font-bold text-red-700 mb-6">{year}</h2>
-            {Object.entries(groupedTrips[year]).map(([date, trips]) => (
-              <div key={date} className="mb-10">
-                <h3 className="text-xl font-semibold mb-3 text-gray-700">{date}</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
-                  {[...trips]
-                    .sort((a, b) => b.createdAt - a.createdAt)
-                    .map((trip, index) => (
-                      <UserTripCardItem key={trip.id || index} trip={trip} />
-                  ))}
+        Object.keys(groupedTrips)
+          .sort((a, b) => b - a)
+          .map((year) => (
+            <div
+              key={year}
+              className="mt-12 animate-fade-slideup"
+              style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
+            >
+              <h2 className="text-3xl font-bold text-red-700 mb-6">{year}</h2>
+              {Object.entries(groupedTrips[year]).map(([date, trips], dateIndex) => (
+                <div
+                  key={date}
+                  className="mb-10 animate-fade-slideup"
+                  style={{ animationDelay: `${0.15 + dateIndex * 0.1}s`, animationFillMode: "forwards" }}
+                >
+                  <h3 className="text-xl font-semibold mb-3 text-gray-700">{date}</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                    {[...trips]
+                      .sort((a, b) => b.createdAt - a.createdAt)
+                      .map((trip, index) => (
+                        <div
+                          key={trip.id || index}
+                          className="animate-fade-scaleup"
+                          style={{ animationDelay: `${0.2 + index * 0.05}s`, animationFillMode: "forwards" }}
+                        >
+                          <UserTripCardItem trip={trip} />
+                        </div>
+                      ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ))
+              ))}
+            </div>
+          ))
       ) : (
         <div className="text-center mt-16 text-gray-500 text-xl">
           <p>No trips found. Start planning your first adventure!</p>

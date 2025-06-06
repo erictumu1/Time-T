@@ -34,3 +34,56 @@
     background-color: black;
   }
 }
+
+@keyframes gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 10s ease infinite;
+}
+
+@keyframes fadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeScaleUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-slideup {
+  opacity: 0;
+  animation-name: fadeSlideUp;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}
+
+.animate-fade-scaleup {
+  opacity: 0;
+  animation-name: fadeScaleUp;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-out;
+  animation-fill-mode: forwards;
+}

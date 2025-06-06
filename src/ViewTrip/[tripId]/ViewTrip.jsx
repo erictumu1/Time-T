@@ -12,6 +12,10 @@ function ViewTrip() {
   const { tripId } = useParams();
   const [trip, setTrip] = useState([]);
 
+  useEffect(() => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}, []);
+
   //To refresh the NavBar on login
   useEffect(() => {
     if (!sessionStorage.getItem('hasReloaded')) {
