@@ -78,7 +78,13 @@ function MyTrips() {
               style={{ animationDelay: "0.1s", animationFillMode: "forwards" }}
             >
               <h2 className="text-3xl font-bold text-red-700 mb-6">{year}</h2>
-              {Object.entries(groupedTrips[year]).map(([date, trips], dateIndex) => (
+              {Object.entries(groupedTrips[year])
+              .sort((a, b) => {
+                  const dateA = new Date(a[1][0].createdAt);
+                  const dateB = new Date(b[1][0].createdAt);
+                  return dateB - dateA;
+                })
+                .map(([date, trips], dateIndex) => (
                 <div
                   key={date}
                   className="mb-10 animate-fade-slideup"
