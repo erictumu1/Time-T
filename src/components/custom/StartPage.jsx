@@ -82,7 +82,7 @@ function StartPage() {
 
         {/* iPhone Motion */}
         <motion.div
-          className="absolute right-[4%] sm:right-[8%] md:right-[10%] lg:right-[12%] xl:right-[14%] bottom-[10%] w-[90px] sm:w-[130px] md:w-[160px] lg:w-[200px] xl:w-[230px] aspect-[9/18] overflow-hidden z-20"
+          className="hidden md:block absolute right-[4%] sm:right-[8%] md:right-[10%] lg:right-[12%] xl:right-[14%] bottom-[10%] w-[90px] sm:w-[130px] md:w-[160px] lg:w-[200px] xl:w-[230px] aspect-[9/18] overflow-hidden z-20"
           initial={{ opacity: 0, x: 50, scale: 0.9 }}
           animate={{
             opacity: 1,
