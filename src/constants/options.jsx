@@ -45,7 +45,7 @@ export const SelectBudgetOptions=[
     {
         id:3,
         title:'Luxury',
-        desc:'Indulge in premium travel with top-tier services and luxurious accommodations for a memorable trip.',
+        desc:'Indulge in premium travel with top-tier services and luxury for a memorable trip.',
         icon:'💵💰',
     },
 ]
@@ -65,7 +65,8 @@ Include:
     - travelTimeFromPrevious
     - bestTimeToVisit: specify exact time ranges (e.g. "9:00am-10:00am", "2:00pm-4:00pm")
 - Output all data strictly in valid JSON format, with the top-level keys: "hotelOptions" and "dailyItinerary".
-- The dailyItinerary should be an array with days, each containing multiple activities that span from morning to evening.
+- The dailyItinerary should be an array with days, each containing multiple activities that span from morning to evening. 
+- Make sure when you are displaying the lunch or dinner in the plan, show lunch at local restaurant in {location} or dinner at local restaurant in {location}.
 
 Example of bestTimeToVisit format: "9:00am-10:00am", "12:00pm-1:30pm", "5:00pm-6:00pm".
 `;

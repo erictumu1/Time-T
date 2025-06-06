@@ -68,10 +68,24 @@ function PlaceCarditem({ place, index }) {
 
   return (
     <Link to={`https://www.google.com/maps/search/?api=1&query=${place?.placeName}`} target="_blank">
+      
       <div className="flex gap-5 border border-gray-400 rounded-2xl p-3 mt-2 hover:scale-105 transition-all hover:shadow-md shadow-blue-200 cursor-pointer">
         <img src={displayImage} className="w-[130px] h-[130px] rounded-xl object-cover" alt={place?.placeName || "Destination"} />
         <div>
-          <h2 className="font-bold text-lg">{place.placeName}</h2>
+
+          {/* Modified h2 tag to show the name of the place when it is showing lunch or dinner such that the AI can redirect to places to eat in that area, the text has been made white */}
+          <h2 className="font-bold text-lg">
+            {(/lunch|dinner/i.test(place.placeName) && place.placeName.includes(" in "))
+              ? (() => {
+                  const [main, location] = place.placeName.split(" in ");
+                  return (
+                    <>
+                      {main}<span className="text-white">{location}</span>
+                    </>
+                  );
+                })()
+              : place.placeName}
+          </h2>
           <p className="text-sm text-gray-500">{place.placeDetails}</p>
           {index === 0 ? (
             <h2 className="text-green-500 font-medium text-sm">First destination</h2>
