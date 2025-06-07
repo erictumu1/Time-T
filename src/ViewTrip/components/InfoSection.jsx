@@ -131,7 +131,14 @@ return (
       >
         <p className="text-lg font-medium text-white">Your trip to:</p>
         <h2 className="text-white text-3xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-          {trip?.userSelection?.location?.properties?.city}, {trip?.userSelection?.location?.properties?.country}
+        {(() => {
+          const city = trip?.userSelection?.location?.properties?.city;
+          const country = trip?.userSelection?.location?.properties?.country;
+          if (!city || !country) return city || country || "Unknown location";
+          return city.toLowerCase() === country.toLowerCase()
+            ? city
+            : `${city}, ${country}`;
+        })()}
         </h2>
       </motion.div>
     </motion.div>

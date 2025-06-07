@@ -76,13 +76,16 @@ function UserTripCardItem({ trip }) {
         </div>
         <div className="p-4 bg-white">
           <h2 className="font-bold text-lg">
-            {trip?.userSelection?.location?.properties?.city},{" "}
-            {trip?.userSelection?.location?.properties?.country}
+            {(() => {
+              const city = trip?.userSelection?.location?.properties?.city;
+              const country = trip?.userSelection?.location?.properties?.country;
+              if (!city || !country) return city || country || "Unknown location";
+              return city.toLowerCase() === country.toLowerCase()
+                ? city
+                : `${city}, ${country}`;
+            })()}
           </h2>
           <p className="text-sm text-gray-600 mt-1">
-            {trip?.userSelection?.location?.properties?.city},{" "}
-            {trip?.userSelection?.location?.properties?.country}
-            <br />
             <span className="text-red-700 font-medium">{trip?.userSelection?.noOfDays}</span>{" "}
             {trip.userSelection?.noOfDays === 1 ? "Day" : "Days"} Trip with a {trip?.userSelection?.budget} Budget.
           </p>

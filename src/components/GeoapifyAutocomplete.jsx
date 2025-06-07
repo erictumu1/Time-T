@@ -27,7 +27,20 @@ function GeoapifyAutocomplete({ apiKey, onSelect }) {
         .then((res) => res.json())
         .then((data) => {
           if (data.features) {
-            setSuggestions(data.features);
+            const seen = new Set();
+            const uniqueCities = data.features.filter((f) => {
+              const city = f.properties.city || f.properties.name;
+              const country = f.properties.country;
+              if (!city || !country) return false;
+            
+              const key = `${city.toLowerCase()}-${country.toLowerCase()}`;
+              if (seen.has(key)) return false;
+            
+              seen.add(key);
+              return true;
+            });
+          
+            setSuggestions(uniqueCities);
           } else {
             setSuggestions([]);
           }
@@ -63,7 +76,7 @@ function GeoapifyAutocomplete({ apiKey, onSelect }) {
               className="p-2 cursor-pointer hover:bg-gray-200"
               onClick={() => handleSelect(s)}
             >
-              {s.properties.formatted}
+              {s.properties.city || s.properties.name}, {s.properties.country}
             </li>
           ))}
         </ul>
