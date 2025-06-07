@@ -1,4 +1,4 @@
-import GooglePlacesAutocompleteNew from "@/components/GooglePlacesAutocompleteNew";
+import GeoapifyAutocomplete from "@/components/GeoapifyAutocomplete";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { collection, doc, getDocs, query, serverTimestamp, setDoc, where } from "firebase/firestore";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
@@ -109,7 +110,8 @@ const onGenerateTrip = async () => {
     const q = query(
       tripsRef,
       where("userEmail", "==", user.email),
-      where("userSelection.location.description", "==", formData.location.description),
+      where("userSelection.location.properties.city", "==", formData.location?.properties?.city),
+      where("userSelection.location.properties.country", "==", formData.location?.properties?.country),
       where("userSelection.noOfDays", "==", formData.noOfDays),
       where("userSelection.budget", "==", formData.budget),
       where("userSelection.traveler", "==", formData.traveler)
@@ -126,7 +128,7 @@ const onGenerateTrip = async () => {
     }
 
     //No existing trip found, generate new trip with AI
-    const FINAL_PROMPT = AI_PROMPT.replace("{location}", formData.location.description)
+    const FINAL_PROMPT = AI_PROMPT.replace("{location}", `${formData.location?.properties?.city}, ${formData.location?.properties?.country}`)
       .replace("{totalDays}", formData.noOfDays)
       .replace("{traveler}", formData.traveler)
       .replace("{budget}", formData.budget)
@@ -205,28 +207,57 @@ return (
         <p className="text-white text-lg font-bold">Generating your trip......</p>
       </div>
     )}
-
     {/* Main Content */}
-    <div className="mx-auto mt-10 max-w-6xl px-5 sm:px-10 md:px-32 lg:px-56 xl:px-10">
-      <h2 className="font-bold text-3xl">Tell us your Travel preferences 🌴</h2>
-      <p className="mt-3 text-gray-500">
-        Just provide some basic information, and our trip planner will generate a customized itinerary based on your preferences.
-      </p>
+    <motion.div
+      className="mx-auto mt-10 max-w-6xl px-5 sm:px-10 md:px-32 lg:px-56 xl:px-10"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <motion.h2
+        className="font-bold text-3xl"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        Tell us your Travel preferences 🌴
+      </motion.h2>
 
-      <div className="mt-20 flex flex-col">
+      <motion.p
+        className="mt-3 text-gray-500"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+      >
+        Just provide some basic information, and our trip planner will generate a customized itinerary based on your preferences.
+      </motion.p>
+
+      {/* Destination */}
+      <motion.div
+        className="mt-20 flex flex-col"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      >
         <div>
           <h2 className="text-xl my-3 font-medium">What is your destination choice?</h2>
-          <GooglePlacesAutocompleteNew
-            apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+          <GeoapifyAutocomplete
+            apiKey={import.meta.env.VITE_GEOAPIFY_API_KEY}
             onSelect={(selected) => {
               setPlace(selected);
               handleInputChange("location", selected);
             }}
           />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="mt-10">
+      {/* Days */}
+      <motion.div
+        className="mt-10"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
+      >
         <h2 className="text-xl my-3 font-medium">How many days are you planning to stay?</h2>
         <Input
           placeholder="Ex. 3"
@@ -236,16 +267,26 @@ return (
         {errorMessage && (
           <p className="text-red-500 mt-2 text-sm font-medium">{errorMessage}</p>
         )}
-      </div>
+      </motion.div>
 
-      <div className="mt-10">
+      {/* Budget */}
+      <motion.div
+        className="mt-10"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
         <h2 className="text-xl my-3 font-medium">What is your Budget?</h2>
         <div className="grid grid-cols-3 gap-5 mt-5">
           {SelectBudgetOptions.map((item, index) => {
             const isSelected = formData?.budget === item.title;
             return (
-              <div
+              <motion.div
                 key={index}
+                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
                 onClick={() => handleInputChange("budget", item.title)}
                 className={`p-4 rounded-lg bg-white cursor-pointer transition-shadow duration-300 ${
                   isSelected
@@ -256,20 +297,30 @@ return (
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h2 className="font-bold text-lg">{item.title}</h2>
                 <h2 className="text-sm text-gray-500">{item.desc}</h2>
-              </div>
+              </motion.div>
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="mt-10">
+      {/* Travelers */}
+      <motion.div
+        className="mt-10"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.8 }}
+      >
         <h2 className="text-xl my-3 font-medium">Who do you plan to travel with on your next adventure?</h2>
         <div className="grid grid-cols-3 gap-5 mt-5">
           {SelectTravelesList.map((item, index) => {
             const isSelected = formData?.traveler === item.people;
             return (
-              <div
+              <motion.div
                 key={index}
+                whileHover={{ scale: 1.05 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
                 onClick={() => handleInputChange("traveler", item.people)}
                 className={`p-4 rounded-lg bg-white cursor-pointer transition-shadow duration-300 ${
                   isSelected
@@ -280,13 +331,19 @@ return (
                 <h2 className="text-4xl">{item.icon}</h2>
                 <h2 className="font-bold text-lg">{item.title}</h2>
                 <h2 className="text-sm text-gray-500">{item.desc}</h2>
-              </div>
+              </motion.div>
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="mt-20 justify-end flex">
+      {/* Generate Button */}
+      <motion.div
+        className="mt-20 justify-end flex"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, delay: 1 }}
+      >
         <Button
           onClick={onGenerateTrip}
           className="bg-black text-white px-6 py-3 rounded-md hover:bg-blue-700 transition cursor-pointer"
@@ -298,9 +355,10 @@ return (
             "Generate Trip"
           )}
         </Button>
-      </div>
+      </motion.div>
       <br />
 
+      {/* Dialog */}
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent>
           <DialogHeader>
@@ -319,7 +377,7 @@ return (
           </DialogHeader>
         </DialogContent>
       </Dialog>
-    </div>
+    </motion.div>
   </>
 );
 }

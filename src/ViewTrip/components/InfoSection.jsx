@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BsFillSendArrowUpFill } from "react-icons/bs";
 import placeholder from "../../assets/placeholder.jpg";
@@ -6,7 +7,6 @@ import placeholder1 from "../../assets/placeholder1.jpg";
 import placeholder2 from "../../assets/placeholder2.jpg";
 import placeholder3 from "../../assets/placeholder3.jpg";
 import placeholder4 from "../../assets/placeholder4.jpg";
-import { GetPlaceDetails } from "../../service/GlobalAPI";
 
 const placeholders = [placeholder,placeholder1, placeholder2, placeholder3, placeholder4];
 
@@ -44,9 +44,7 @@ function InfoSection({ trip }) {
   useEffect(() => {
     if (photos.length > 0) {
       const interval = setInterval(() => {
-        setCurrentPhotoIndex(
-          (prevIndex) => (prevIndex + 1) % Math.min(6, photos.length)
-        );
+        setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % photos.length);
       }, 20000);
       return () => clearInterval(interval);
     }
@@ -63,87 +61,116 @@ function InfoSection({ trip }) {
   // Load actual photo from Google
   useEffect(() => {
     if (photos.length > 0) {
-      const photoName = photos[currentPhotoIndex]?.name;
-      if (photoName) {
-        const url = `https://places.googleapis.com/v1/${photoName}/media?key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}&maxHeightPx=800`;
-
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-          setPhotoUrl(url);
-          console.log("Preloaded image:", url);
-        };
-      }
+      const url = photos[currentPhotoIndex];
+      const img = new Image();
+      img.src = url;
+      img.onload = () => {
+        setPhotoUrl(url);
+        console.log("Preloaded image:", url);
+      };
     }
   }, [currentPhotoIndex, photos]);
 
   const fetchPhotos = async () => {
     try {
-      const data = {
-        textQuery: trip?.userSelection?.location?.description,
-      };
-      const result = await GetPlaceDetails(data);
-      const photoArray = result?.data?.places?.[0]?.photos || [];
-      if (photoArray.length === 0) {
-        console.error("No photos found.");
+      const query = trip?.userSelection?.location?.properties?.city 
+                    ? `${trip.userSelection.location.properties.city} ${trip.userSelection.location.properties.country}` 
+                    : trip?.userSelection?.location?.description || "travel";
+    
+      const response = await fetch(
+        `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=3&client_id=${import.meta.env.VITE_UNSPLASH_ACCESS_KEY}`
+      );
+    
+      if (!response.ok) {
+        console.error("Unsplash API error:", response.statusText);
         return;
       }
-      setPhotos(photoArray);
+    
+      const data = await response.json();
+    
+      if (data.results.length === 0) {
+        console.error("No photos found on Unsplash.");
+        return;
+      }
+    
+      // Map the URLs from Unsplash results
+      const photoUrls = data.results.map(photo => photo.urls.regular);
+      setPhotos(photoUrls);
+      setPhotoUrl(photoUrls[0]); // Set initial photo
     } catch (error) {
-      console.error("Error fetching photo details:", error);
+      console.error("Error fetching photos from Unsplash:", error);
     }
   };
 
   const displayImage = photoUrl || placeholders[placeholderIndex];
 
-  return (
-    <div>
-      <div className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] rounded-xl overflow-hidden">
-        <img
-          src={placeholders[placeholderIndex]}
-          alt="Cycling Placeholder"
-          className="absolute w-full h-full object-cover blur-sm scale-110 transition-opacity duration-1000 ease-in-out"
-        />
-        <img
-          src={displayImage}
-          alt="Main"
-          className="absolute w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-0"
-          onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
-        />
-        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-6">
-          <p className="text-lg font-medium text-white">Your trip to:</p>
-          <h2 className="text-white text-3xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-            {trip?.userSelection?.location?.description}
-          </h2>
+return (
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+    <motion.div
+      className="relative w-full h-[200px] sm:h-[300px] md:h-[400px] lg:h-[500px] rounded-xl overflow-hidden"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+    >
+      <img
+        src={placeholders[placeholderIndex]}
+        alt="Cycling Placeholder"
+        className="absolute w-full h-full object-cover blur-sm scale-110 transition-opacity duration-1000 ease-in-out"
+      />
+      <img
+        src={displayImage}
+        alt="Main"
+        className="absolute w-full h-full object-cover transition-opacity duration-700 ease-in-out opacity-0"
+        onLoad={(e) => e.currentTarget.classList.remove("opacity-0")}
+      />
+      <motion.div
+        className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.7 }}
+      >
+        <p className="text-lg font-medium text-white">Your trip to:</p>
+        <h2 className="text-white text-3xl font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+          {trip?.userSelection?.location?.properties?.city}, {trip?.userSelection?.location?.properties?.country}
+        </h2>
+      </motion.div>
+    </motion.div>
+
+    <motion.div
+      className="flex justify-between items-center"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5, duration: 0.5 }}
+    >
+      <div className="my-5 flex flex-col gap-2">
+        <h2 className="font-bold text-2xl">
+          <span className="text-red-700">{trip?.userSelection?.noOfDays}</span>{" "}
+          {trip.userSelection?.noOfDays === 1 ? "Day" : "Days"} Trip.
+        </h2>
+        <div className="flex gap-5 flex-wrap">
+          <span className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
+            📅 {trip.userSelection?.noOfDays}{" "}
+            {trip.userSelection?.noOfDays === 1 ? "Day" : "Days"}
+          </span>
+          <span className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
+            💳 {trip.userSelection?.budget} Budget
+          </span>
+          <span className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
+            👨‍👩‍👧‍👧 No. of Travelers: {trip.userSelection?.traveler}
+          </span>
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
-        <div className="my-5 flex flex-col gap-2">
-          <h2 className="font-bold text-2xl">
-            <span className="text-red-700">{trip?.userSelection?.noOfDays}</span>{" "}
-            {trip.userSelection?.noOfDays === 1 ? "Day" : "Days"} Trip.
-          </h2>
-          <div className="flex gap-5 flex-wrap">
-            <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
-              📅 {trip.userSelection?.noOfDays}{" "}
-              {trip.userSelection?.noOfDays === 1 ? "Day" : "Days"}
-            </h2>
-            <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
-              💳 {trip.userSelection?.budget} Budget
-            </h2>
-            <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md">
-              👨‍👩‍👧‍👧 No. of Travelers: {trip.userSelection?.traveler}
-            </h2>
-          </div>
-        </div>
+      <Button
+        className="bg-blue-700 text-white px-6 py-3 rounded-md hover:bg-black transition cursor-pointer"
+        onClick={handleShare}
+      >
+        <BsFillSendArrowUpFill />
+      </Button>
+    </motion.div>
+  </motion.div>
+);
 
-        <Button className="bg-blue-700 text-white px-6 py-3 rounded-md hover:bg-black transition cursor-pointer" onClick={handleShare}>
-          <BsFillSendArrowUpFill />
-        </Button>
-      </div>
-    </div>
-  );
 }
 
 export default InfoSection;
