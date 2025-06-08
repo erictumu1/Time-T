@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { db } from '../../service/firebaseconfig';
-import Footer from '../components/Footer';
 import Hotels from '../components/Hotels';
 import InfoSection from '../components/InfoSection';
 import PlacesToVisit from '../components/PlacesToVisit';
@@ -52,8 +51,6 @@ function ViewTrip() {
       {/* Daily Plan */}
       <PlacesToVisit trip={trip} />
 
-      {/* Footer */}
-      <Footer trip={trip} />
     </div>
   );
 }

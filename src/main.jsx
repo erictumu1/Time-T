@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import App from './App.jsx'
+import Footer from './components/custom/Footer.jsx'
 import Header from './components/custom/Header.jsx'
 import CreateTrip from './CreateTrip/CreateTrip.jsx'
 import './index.css'
@@ -37,5 +38,6 @@ createRoot(document.getElementById('root')).render(
     <RouterProvider router = {router} />
     <ToastContainer position="top-right" autoClose={3000} />
     </GoogleOAuthProvider>
+    <Footer/>
   </StrictMode>,
 )
